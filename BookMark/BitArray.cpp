@@ -51,7 +51,7 @@ bool CBitArray::SetSize(int nNewSize)
 {
 	if (nNewSize < 0) return false;
 
-	bool bOK = false;
+	//bool bOK = false;
 	int oldLen = BITARRAY_ARRAYSIZE(m_nSize);
 	int newLen = BITARRAY_ARRAYSIZE(nNewSize);
 
@@ -59,7 +59,7 @@ bool CBitArray::SetSize(int nNewSize)
 	{
 		int* pNewData = new int[newLen];
 		if (NULL == pNewData) {
-			return bOK;
+			return false;
 		}
 
 		int i = 0;
@@ -91,7 +91,8 @@ bool CBitArray::SetSize(int nNewSize)
 	}
 
 	m_nSize = nNewSize;
-	return bOK;
+	//return bOK;
+	return true;
 }
 bool CBitArray::Clear()
 {
