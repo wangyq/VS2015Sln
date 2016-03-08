@@ -5,10 +5,13 @@
 #define BITARRAY_ARRAYSIZE(nSize)  (((nSize) + BITARRAY_BASESIZE -1 )/BITARRAY_BASESIZE)
 #define BITARRAY_ARRAYINDEX(index)  ((index)/BITARRAY_BASESIZE)
 #define BITARRAY_ARRAYOFFSET(index)  ((index)%BITARRAY_BASESIZE)
-//#define BITARRAY_GETMASK(offset)  (1<<(offset))
+
 //#define GETMASK(offset)  (~(1<<(offset)))
 #define BITARRAY_GETVALUE(val,offset)   ( ((val)>>(offset)) & 0x1 )
-#define BITARRAY_SETVALUE(val,offset,bit)  ((val) = ( ( (bit)<<(offset) ) | (val) ))
+
+#define BITARRAY_CLEARMASK(offset)  (~(1<<(offset)))
+#define BITARRAY_CLEARVALUE(val,offset)  ((val) = BITARRAY_CLEARMASK(offset) & (val) )
+#define BITARRAY_SETVALUE(val,offset,bit)  ((val) = ( ( (bit)<<(offset) ) | BITARRAY_CLEARVALUE(val,offset) ))
 
 #define ALLBITSET (-1)
 
@@ -78,11 +81,12 @@ bool CBitArray::SetSize(int nNewSize)
 		m_nCapacity = newLen;  //resize capacity
 	}
 	else if( nNewSize < m_nSize ){//no need resize
-		for (int i = newLen; i < oldLen; i++) {
+		int i = 0;
+		for ( i = newLen; i < oldLen; i++) {
 			m_pData[i] = 0; //
 		}
 		int start = BITARRAY_ARRAYOFFSET(nNewSize);
-		for (int i = start; i < BITARRAY_BASESIZE; i++) {
+		for ( i = start; i < BITARRAY_BASESIZE; i++) {
 			m_pData[newLen - 1] &= (~(1 << i));
 		}
 	}
@@ -94,9 +98,13 @@ bool CBitArray::SetSize(int nNewSize)
 	//return bOK;
 	return true;
 }
-bool CBitArray::Clear()
+bool CBitArray::Clear(int index)
 {
-	int nArraySize = BITARRAY_ARRAYSIZE(m_nSize);
+	return Set(index,false);
+}
+bool CBitArray::ClearAll()
+{
+	int nArraySize = m_nCapacity;//BITARRAY_ARRAYSIZE(m_nSize);
 	for (int i = 0; i < nArraySize; i++) {
 		m_pData[i] = 0;  //default is zero!
 	}

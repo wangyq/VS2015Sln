@@ -14,9 +14,10 @@ private:
 	int m_nSize;
 	int * m_pData;
 public:
-	CBitArray(int nSize);
+	CBitArray(int nSize=0);
 	~CBitArray();
-	bool Clear();
+	bool Clear(int index);
+	bool ClearAll();
 	bool Set(int index, bool bit=true);
 	bool Get(int index);
 
